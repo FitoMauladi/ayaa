@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kejutan untuk Aya</title>
+    <title>For You Ayaa</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -18,7 +18,7 @@
             margin: 0;
             overflow: hidden;
             cursor: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Heart_shape_icon.svg/2048px-Heart_shape_icon.svg.png'), auto;
-            transition: opacity 1s ease-out; /* Efek transisi untuk fade */
+            transition: opacity 1s ease-out;
         }
 
         .fade-out {
@@ -31,6 +31,10 @@
             color: #8e44ad;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
             animation: fadeIn 2s ease-out;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow: visible;
+            text-overflow: unset;
         }
 
         button {
@@ -60,31 +64,16 @@
             }
         }
 
-        .typed-text {
-            display: inline-block;
-            white-space: nowrap;
-            overflow: hidden;
-            border-right: 3px solid rgba(0, 0, 0, 0.5);
-            animation: typing 3s steps(30) 1s forwards, blinkCaret 0.75s step-end infinite;
-        }
-
-        @keyframes blinkCaret {
-            50% {
-                border-color: transparent;
-            }
-        }
-
-        /* Animasi love jatuh */
         @keyframes fall {
             0% {
                 top: -10%;
                 opacity: 1;
-                transform: scale(0.8); /* Memulai dengan sedikit lebih kecil */
+                transform: scale(0.8);
             }
             100% {
                 top: 100%;
                 opacity: 0;
-                transform: scale(1); /* Ukuran normal saat jatuh */
+                transform: scale(1);
             }
         }
 
@@ -114,9 +103,33 @@
     <div>
         <div id="message"></div>
         <button onclick="showMessage()">Klik untuk Melihat</button>
+        <audio id="audio" src="kissme.mp3" preload="auto"></audio>
     </div>
 
     <script>
+    
+    const audio = document.getElementById("audio");
+
+    // Cek apakah audio sudah dimainkan sebelumnya
+    if (localStorage.getItem("audioPlaying") === "true") {
+        audio.currentTime = parseFloat(localStorage.getItem("audioTime")) || 0;
+        audio.play();
+    }
+
+    // Simpan waktu audio setiap 1 detik
+    setInterval(() => {
+        if (!audio.paused) {
+            localStorage.setItem("audioTime", audio.currentTime);
+        }
+    }, 1000);
+
+    // Menyimpan status audio sebelum berpindah halaman
+    window.onbeforeunload = () => {
+        localStorage.setItem("audioTime", audio.currentTime);
+        localStorage.setItem("audioPlaying", !audio.paused);
+    };
+
+
         function showMessage() {
             const message = "halowww dedee ayaa, maafin mas pitoo yaa sebagai gantinya nih ada bunga buat dedee ❤️";
             const displayElement = document.getElementById("message");
@@ -125,20 +138,23 @@
             // Sembunyikan tombol setelah diklik
             document.querySelector("button").style.display = "none";
 
+            // Simpan status audio sedang dimainkan
+            localStorage.setItem('audioPlaying', 'true');
+            audio.play(); // Putar lagu
+
             // Tampilkan karakter satu per satu dengan efek ketikan
             function typeWriter() {
                 if (index < message.length) {
-                    displayElement.innerHTML = `<span class="typed-text">${message.slice(0, index + 1)}</span>`;
+                    displayElement.textContent = message.slice(0, index + 1); // Tampilkan teks
                     index++;
                     setTimeout(typeWriter, 75); // Kecepatan mengetik (75ms per karakter)
                 } else {
                     // Tunggu 1 detik, lalu arahkan ke halaman bocil.html dengan efek fade-out
                     setTimeout(() => {
-                        // Menambahkan kelas fade-out pada body untuk efek transisi
                         document.body.classList.add('fade-out');
                         setTimeout(() => {
-                            window.location.href = "bocil.html"; // Pindah halaman setelah transisi selesai
-                        }, 1000); // Pastikan halaman berpindah setelah animasi selesai
+                            window.location.href = "bocil.html";  // Ganti ke bocil.html
+                        }, 1000);
                     }, 1000);
                 }
             }
@@ -146,14 +162,14 @@
             typeWriter();
 
             // Membuat love berjatuhan
-            setInterval(function() {
+            setInterval(function () {
                 let love = document.createElement('div');
                 love.classList.add('love');
-                love.style.setProperty('--x-pos', Math.random());  // Menetapkan posisi x secara acak
+                love.style.setProperty('--x-pos', Math.random());
                 document.body.appendChild(love);
 
                 // Hapus love setelah jatuh
-                setTimeout(() => love.remove(), 8000); // Hapus setelah selesai jatuh
+                setTimeout(() => love.remove(), 8000);
             }, 500); // Membuat love setiap 500ms
         }
     </script>
